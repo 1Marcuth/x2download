@@ -1,22 +1,15 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "outDir": "./dist/",
+    "rootDir": "./src/",
     "declaration": true,
-    "target": "ES6",
-    "module": "commonjs",
-    "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "baseUrl": "./src",
-    "outDir": "./dist/"
+    "allowSyntheticDefaultImports": true,
+    "strict": true
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

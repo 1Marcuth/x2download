@@ -1,13 +1,13 @@
 {
   "name": "x2download",
-  "version": "0.1.5",
+  "version": "0.1.10",
   "description": "",
   "declaration": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc"
   },
-  "keywords": [],
+  "keywords": ["x2download", "youtube"],
   "author": "Marcuth",
   "license": "ISC",
   "devDependencies": {
