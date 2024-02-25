@@ -1,3 +1,5 @@
+export type Optional<T> = T | undefined | null
+
 export default interface RawVideoInfo {
     vid: string
     title: string

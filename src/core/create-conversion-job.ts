@@ -1,15 +1,15 @@
-import FormData from "form-data"
+import axios, { AxiosRequestConfig } from "axios"
+import FormData from "../form-data"
 import isUrl from "is-url"
-import axios from "axios"
 
-import { CreateConvertJobRawData } from "../types"
+import { CreateConvertJobRawData, Optional } from "../types"
 import sleep from "../utils/sleep"
 
-type CreateConvertJobParsedData = {
+export type CreateConvertJobParsedData = {
     status: string
-    jobId: string | null
+    jobId: Optional<string>
     statusCode: number
-    fileUrl: string | null
+    fileUrl: Optional<string>
 }
 
 export type CreateConvertJobOptions = {
@@ -21,6 +21,8 @@ export type CreateConvertJobOptions = {
     token: string
     tokenExpiresAt: number
     waitUntilGetUrl?: boolean
+    requestOptions?: AxiosRequestConfig<FormData>
+    corsProxyUrl?: string
 }
 
 function parseConvertVideoData(rawData: CreateConvertJobRawData): CreateConvertJobParsedData {
@@ -35,10 +37,11 @@ function parseConvertVideoData(rawData: CreateConvertJobRawData): CreateConvertJ
 }
 
 const defaultOptions: Partial<CreateConvertJobOptions> = {
-    waitUntilGetUrl: true
+    waitUntilGetUrl: true,
+    requestOptions: {}
 }
 
-async function createConvertJob({
+async function createConversionJob({
     serverUrl,
     videoId,
     fileType,
@@ -46,7 +49,9 @@ async function createConvertJob({
     fileName,
     token,
     tokenExpiresAt,
-    waitUntilGetUrl = defaultOptions.waitUntilGetUrl
+    waitUntilGetUrl = defaultOptions.waitUntilGetUrl,
+    requestOptions = defaultOptions.requestOptions,
+    corsProxyUrl
 }: CreateConvertJobOptions): Promise<CreateConvertJobParsedData> {
     function createFormData(): FormData {
         const formData = new FormData()
@@ -61,11 +66,11 @@ async function createConvertJob({
         return formData
     }
 
-    const url = `${serverUrl}/api/json/convert`
+    const url = `${corsProxyUrl ?? ""}${serverUrl}/api/json/convert`
 
     const formData = createFormData()
 
-    const response = await axios.post(url, formData)
+    const response = await axios.post(url, formData, { ...requestOptions })
     const data = parseConvertVideoData(response.data as CreateConvertJobRawData)
 
     while (!data.fileUrl && waitUntilGetUrl) {
@@ -74,7 +79,7 @@ async function createConvertJob({
         try {
             const formData = createFormData()
 
-            const currentResponse = await axios.post(url, formData, { timeout: 3000 })
+            const currentResponse = await axios.post(url, formData, { timeout: 3000, ...requestOptions })
             const currentData = parseConvertVideoData(currentResponse.data as CreateConvertJobRawData)
             
             if (currentData.fileUrl) {
@@ -88,4 +93,4 @@ async function createConvertJob({
     return data as CreateConvertJobParsedData
 }
 
-export default createConvertJob
+export default createConversionJob

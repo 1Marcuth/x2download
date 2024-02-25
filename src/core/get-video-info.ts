@@ -1,30 +1,35 @@
-import FormData from "form-data"
-import axios from "axios"
+import axios, { AxiosRequestConfig } from "axios"
+import FormData from "../form-data"
 
 import { parseStringFileSizeToBytes } from "../utils/parsers"
 import RawVideoInfo, { Links } from "./../types"
 
-type GetVideoInfoOptions = {
+export type GetVideoInfoOptions = {
     videoUrl: string
     origin?: string
+    requestOptions?: AxiosRequestConfig<FormData>
+    corsProxyUrl?: string
 }
 
-const defaultOptions = {
-    origin: "home"
+const defaultOptions: Partial<GetVideoInfoOptions> = {
+    origin: "home",
+    requestOptions: {}
 }
 
 async function getVideoInfo({
     videoUrl,
-    origin = defaultOptions.origin
+    origin = defaultOptions.origin,
+    requestOptions = defaultOptions.requestOptions,
+    corsProxyUrl
 }: GetVideoInfoOptions): Promise<ParsedVideoInfo> {
-    const url = "https://x2download.app/api/ajaxSearch"
+    const url = `${corsProxyUrl ?? ""}https://x2download.app/api/ajaxSearch`
 
     const formData = new FormData()
 
     formData.append("q", videoUrl)
     formData.append("vt", origin)
 
-    const response = await axios.post(url, formData)
+    const response = await axios.post(url, formData, { ...requestOptions })
 
     const data = parseVideoInfo(response.data as RawVideoInfo)
 
@@ -37,14 +42,14 @@ type Extra = {
     p: string
 }
 
-type Format = {
+export type Format = {
     fileExtension: string
     quality: string
     qualityKey: string
     size: number
 }
 
-type ParsedVideoInfo = {
+export type ParsedVideoInfo = {
     id: string
     title: string
     fileName: string
@@ -54,7 +59,6 @@ type ParsedVideoInfo = {
     formats: Format[]
     extra: Extra
 }
-
 
 
 function parseFormats(formats: Links): Format[] {

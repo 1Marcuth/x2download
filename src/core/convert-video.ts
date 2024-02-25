@@ -1,21 +1,23 @@
-import FormData from "form-data"
-import axios from "axios"
+import axios, { AxiosRequestConfig } from "axios"
+import FormData from "../form-data"
 
-type ConvertVideoRawData = {
+export type ConvertVideoRawData = {
     c_status: string
     c_server: string
 }
 
-type ConvertVideoOptions = {
+export type ConvertVideoOptions = {
     videoId: string
     fileType: string
     quality: string
     token: string
     tokenExpiresAt: number
     client?: string
+    requestOptions?: AxiosRequestConfig<FormData>
+    corsProxyUrl?: string
 }
 
-type ConvertVideoParsedData = {
+export type ConvertVideoParsedData = {
     conversionStatus: string
     conversionServerUrl: string
 }
@@ -29,8 +31,9 @@ function parseConvertVideoData(rawData: ConvertVideoRawData): ConvertVideoParsed
     return data
 }
 
-const defaultOptions = {
-    client: "X2Download.app"
+const defaultOptions: Partial<ConvertVideoOptions> = {
+    client: "X2Download.app",
+    requestOptions: {}
 }
 
 async function convertVideo({
@@ -39,9 +42,11 @@ async function convertVideo({
     quality,
     token,
     tokenExpiresAt,
-    client = defaultOptions.client
+    client = defaultOptions.client,
+    requestOptions = defaultOptions.requestOptions,
+    corsProxyUrl
 }: ConvertVideoOptions): Promise<ConvertVideoParsedData> {
-    const url = "https://backend.svcenter.xyz/api/convert-by-45fc4be8916916ba3b8d61dd6e0d6994"
+    const url = `${corsProxyUrl ?? ""}https://backend.svcenter.xyz/api/convert-by-45fc4be8916916ba3b8d61dd6e0d6994`
 
     const formData = new FormData()
 
@@ -59,7 +64,7 @@ async function convertVideo({
         ...formData.getHeaders()
     }
  
-    const response = await axios.post(url, formData, { headers: headers })
+    const response = await axios.post(url, formData, { headers: headers, ...requestOptions })
     const data = parseConvertVideoData(response.data as ConvertVideoRawData)
 
     return data
