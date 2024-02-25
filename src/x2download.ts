@@ -80,7 +80,7 @@ class X2download {
         const response = await axios.get(url, { responseType: "stream" })
 
         if (typeof window === "undefined") {
-            const fs = require("fs")
+            const fs = await import("fs")
             
             const data = await response.data
             const writer = fs.createWriteStream(fileName)
