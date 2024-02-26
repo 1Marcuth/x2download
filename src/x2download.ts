@@ -50,8 +50,6 @@ class X2download {
             corsProxyUrl: this.corsProxyUrl
         })
 
-        console.log(conversionResult)
-
         const conversionJobResult = await createConversionJob({
             serverUrl: conversionResult.conversionServerUrl,
             videoId: this.info.id,
@@ -62,8 +60,6 @@ class X2download {
             tokenExpiresAt: this.info.tokenExpiresAt,
             corsProxyUrl: this.corsProxyUrl
         })
-
-        console.log(conversionJobResult)
 
         if (!conversionJobResult.fileUrl) {
             throw new Error("Unable to get the video file url for an unknown reason!")

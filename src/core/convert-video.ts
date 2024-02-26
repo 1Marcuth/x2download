@@ -3,7 +3,8 @@ import FormData from "../form-data"
 
 export type ConvertVideoRawData = {
     c_status: string
-    c_server: string
+    c_server?: string
+    d_url?: string
 }
 
 export type ConvertVideoOptions = {
@@ -25,7 +26,11 @@ export type ConvertVideoParsedData = {
 function parseConvertVideoData(rawData: ConvertVideoRawData): ConvertVideoParsedData {
     const data: ConvertVideoParsedData = {
         conversionStatus: rawData.c_status,
-        conversionServerUrl: rawData.c_server
+        conversionServerUrl: rawData.c_server ?? rawData.d_url!
+    }
+
+    if (!data.conversionServerUrl) {
+        throw new Error(`Unable to get media conversion server url! Server response: ${rawData}`)
     }
 
     return data

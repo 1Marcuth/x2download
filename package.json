@@ -1,19 +1,25 @@
 {
   "name": "x2download",
-  "version": "0.1.12",
+  "version": "0.1.19",
   "description": "",
   "declaration": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "tsc && babel src -d dist"
+    "build": "tsc && babel src -d dist",
+    "bp": "npm run build && npm publish",
+    "push": "git add -A && git commit -m \"Commit automático\" && git push origin"
   },
-  "keywords": ["x2download", "youtube"],
+  "keywords": [
+    "x2download",
+    "youtube"
+  ],
   "author": "Marcuth",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.23.9",
     "@babel/core": "^7.23.9",
     "@babel/preset-env": "^7.23.9",
+    "@babel/preset-typescript": "^7.23.3",
     "@types/is-url": "^1.2.32",
     "@types/node": "^20.11.20",
     "typescript": "^5.3.3"
